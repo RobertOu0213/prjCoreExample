@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@model IEnumerable<prjCoreExample.Models.Category>
+
+@section Styles {
+    <style>
+        h1 {
+            color: red;
+        }
+    </style>
+
+}
+@section Scripts {
+    <script>
+
+function printSomething(data) {
+    const promise = new Promise((resolve, reject) => {
+        setTimeout(() => { resolve(data) }, 1000)
+    })
+    return promise;
+}
+
+//printSomething("A").then(data => {
+//    console.log(data)
+//    return printSomething("B")
+//}).then(data => {
+//    console.log(data)
+//}).finally(() => {
+//    console.log("end")
+//})
+
+
+    (async () => {
+        const data = await printSomething("A")
+        console.log(data);
+        const data1 = await printSomething("B")
+        console.log(data1);
+    })();
+    </script>
+}
+
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    @foreach (var product in Model)
+    {
+        <li>@product.CategoryName</li>
+    }
+</div>

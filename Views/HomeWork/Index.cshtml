@@ -1,0 +1,46 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+@section Styles {
+    <style>
+
+    </style>
+
+}
+@section Scripts {
+    <script src="~/js/travel.js"></script>
+    <script>
+        const cardContainer = document.querySelector('.cardContainer');
+        let string ="";
+
+        spots.CommonFormat.Section.forEach((item) => {       
+            if (item.file && item.file.img && item.file.img.length > 0 && item.file.img[0].text) { 
+            string += `
+                <div class="col">
+                    <div class="card h-100">
+                          <img src=${item.file.img[0].text} class="card-img-top" alt="...">
+                        <div class="card-body">
+                                    <h5 class="card-title">${item.stitle}</h5>
+                            <p class="card-text">${item.xbody.substring(0, 50)}...</p>
+                        </div>
+                    </div>
+                </div>
+            `
+            }
+            else {
+                console.log('Invalid or missing image data for item:', item);
+            }
+        })
+
+        cardContainer.innerHTML = string;       
+    </script>
+}
+
+
+<div class="container-md">
+    <div class="row row-cols-md-3 g-4 cardContainer">
+    </div>
+</div>
+
+

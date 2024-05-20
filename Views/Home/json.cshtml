@@ -1,0 +1,61 @@
+﻿@{
+    ViewData["Title"] = "json";
+}
+
+<h1>json</h1>
+<div id="test"></div>
+<table id="tableContainer">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Work Years</th>
+            <th>Salary</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+@section Scripts {
+    <script>
+        const divContainer = document.querySelector("#test")
+        const tableContainer = document.querySelector("#tableContainer > tbody")
+      
+        var emp = {
+            "employees": [
+                { "name": "Tom", "workYears": 3, "salary": 35000 },
+                { "name": "Jack", "workYears": 5, "salary": 40000 },
+                { "name": "Mary", "workYears": 7, "salary": 45000 }
+            ]
+        };
+
+        // for (let item of emp.employees) {
+        //     console.log(item.name);
+        //     console.log(item.workYears);
+        //     console.log(item.salary);
+        // }
+
+        const box = emp.employees.map(item => `<div>${item.name}</div>`)
+        console.log(box);
+        divContainer.innerHTML = box.join("");
+
+
+        // let htmlContent = ""
+        // emp.employees.forEach(item => htmlContent += `<div>${item.name} < /div>`)
+
+        // divContainer.innerHTML = htmlContent;
+
+        const table = emp.employees.map(item => {
+          return  `<tr>
+                     <td>${item.name}</td>
+                      <td>${item.workYears}</td>
+                      <td>${item.salary}</td>
+                   </tr>`
+        })
+       
+        tableContainer.innerHTML = table.join("");
+            
+                                        
+    </script>
+    
+}
+
