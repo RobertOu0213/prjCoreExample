@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using prjCoreExample.Models;
+using prjCoreExample.ViewModel;
 using System.Threading;
 
 namespace prjCoreExample.Controllers
@@ -48,17 +49,60 @@ namespace prjCoreExample.Controllers
             return Content($"Hello {name}, you are {age} years old, you are {id}", "text/html", System.Text.Encoding.UTF8);
         }
 
-        public IActionResult CheckAccount(string name, string email, string age)
+
+
+        public IActionResult CheckAccount(string name, string email)
         {
-            if(name == "Jack")
+            if (name == "Jack" && email == "Jack@Jack.com")
             {
-                return Content("登入成功", "text/html", System.Text.Encoding.UTF8);
+                return Content("此姓名和郵件已有人使用", "text/html", System.Text.Encoding.UTF8);
             }
-            else
+            else if (name == "Jack")
             {
-                return Content("登入失敗", "text/html", System.Text.Encoding.UTF8);
+                return Content("此姓名已有人使用", "text/html", System.Text.Encoding.UTF8);
             }
+            else if (email == "Jack@Jack.com")
+            {
+                return Content("此郵件已使用", "text/html", System.Text.Encoding.UTF8);
+            }
+            else if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(email))
+            {
+                return Content("此姓名和郵件無人使用", "text/html", System.Text.Encoding.UTF8);
+            }
+            else if (!string.IsNullOrEmpty(name))
+            {
+                return Content("此姓名無人使用", "text/html", System.Text.Encoding.UTF8);
+            }
+            else if (!string.IsNullOrEmpty(email))
+            {
+                return Content("此郵件無人使用", "text/html", System.Text.Encoding.UTF8);
+            }
+
+            return Content("請提供有效的姓名和郵件", "text/html", System.Text.Encoding.UTF8);
+
+
+
+        }
+
+
+        [HttpPost]
+        public IActionResult CheckAccount([FromBody] CUserViewModel user)
+        {
+            if (user.Name == "Jack")
+            {
+                return Content("此姓名已有人使用", "text/html", System.Text.Encoding.UTF8);
+            }
+
+            if (user.Email == "Jack@Jack.com")
+            {
+                return Content("此郵件已使用", "text/html", System.Text.Encoding.UTF8);
+            }
+
+            return Content($"Hello! {user.Name}, {user.Age}歲了, 電子郵件是{user.Email}", "text/html", System.Text.Encoding.UTF8);
+
         }
 
     }
+
+
 }
