@@ -1,0 +1,81 @@
+﻿
+@{
+    ViewData["Title"] = "First";
+}
+
+<button class="btnBox">First</button>
+<button class="btnBox2">Second</button>
+<div class="myId"></div>
+<img src="~/images/Plant.gif" alt="Alternate Text" id="image" style="display:none" />
+
+@section Styles {
+    <style>
+
+    </style>
+
+}
+@section Scripts {
+    <script>
+        const btnBox = document.querySelector(".btnBox");
+        const btnBox2 = document.querySelector(".btnBox2");
+        const myId = document.querySelector(".myId");
+        const image = document.querySelector("#image");
+        let abortController = new AbortController();
+        btnBox.addEventListener("click", async () => {
+
+            // console.log(fetch("api/city"))
+            // fetch("@Url.Content("~/api/city")")
+            //     .then(response => {
+            //         return response.text();
+            //     })
+            //     .then((data) => {
+            //         myId.textContent = data;
+            //     })
+             
+            try {
+                abortController = new AbortController();
+                let signal = abortController.signal
+
+                setTimeout(() => {
+                    abortController.abort();
+                }, 3000)
+
+                image.style.display = "inline";
+                btnBox.setAttribute("disabled", "disabled");
+
+                const response = await fetch("@Url.Content("~/api/city")",{ signal });
+                if (!response.ok) {
+                    throw new Error(`${response.status}`)
+                }
+                const data = await response.text();
+                myId.textContent = data;
+            } catch (error) {
+                myId.innerHTML = `<h2>${error.message}</h2>`
+            } finally {
+                image.style.display = "none";
+                btnBox.removeAttribute("disabled");
+
+            }
+
+
+
+          
+        })
+
+
+        btnBox2.addEventListener("click",() => {
+         
+        
+
+            if (abortController) {
+                abortController.abort();
+            }
+        })
+
+    
+
+
+    </script>
+}
+
+

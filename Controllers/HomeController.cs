@@ -2,6 +2,7 @@
 using prjCoreExample.Models;
 using System.Diagnostics;
 
+
 namespace prjCoreExample.Controllers
 {
     public class HomeController : Controller
@@ -23,8 +24,21 @@ namespace prjCoreExample.Controllers
             return View(products);   
         }
 
+        public IActionResult First()
+        {
+           
+            return View();
+        }
+        public IActionResult Address() {
+         return View();
+        }
+
         public IActionResult json()
         {
+            return View();
+        }
+
+        public IActionResult Register() {
             return View();
         }
 

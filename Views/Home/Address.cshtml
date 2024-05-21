@@ -1,0 +1,39 @@
+﻿
+@{
+    ViewData["Title"] = "Address";
+}
+
+<h1>Address</h1>
+
+<select id="selectBox"></select>
+
+@section Styles {
+    <style>
+
+    </style>
+
+}
+@section Scripts {
+    <script>
+        const selectBox = document.querySelector("#selectBox");
+
+        (async () => {
+            try {
+                const response = await fetch("@Url.Content("~/api/index")")
+                if (!response.ok) { throw new Error(`${response.status}`)}
+                const datas = await response.json()
+                let string = "";
+                console.log(datas);
+                datas.forEach(data => {
+                    string += `<option value="${data.id}">${data.city}</option>`
+                });
+                selectBox.innerHTML = string;
+            }
+            catch (err) {
+                console.log(err.message)
+            }
+        })();
+    
+
+    </script>
+}
