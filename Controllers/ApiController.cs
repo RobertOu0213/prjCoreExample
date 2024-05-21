@@ -16,8 +16,10 @@ namespace prjCoreExample.Controllers
         }
         public IActionResult Index()
         {
-            
+
             var cities = _context.Addresses.Select(r => r.City).Distinct();
+            var cityList = (from r in _context.Addresses
+                            select r.City).Distinct();
             return Json(cities);
         }
 
