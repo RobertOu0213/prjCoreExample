@@ -48,5 +48,17 @@ namespace prjCoreExample.Controllers
             return Content($"Hello {name}, you are {age} years old, you are {id}", "text/html", System.Text.Encoding.UTF8);
         }
 
+        public IActionResult CheckAccount(string name, string email, string age)
+        {
+            if(name == "Jack")
+            {
+                return Content("登入成功", "text/html", System.Text.Encoding.UTF8);
+            }
+            else
+            {
+                return Content("登入失敗", "text/html", System.Text.Encoding.UTF8);
+            }
+        }
+
     }
 }

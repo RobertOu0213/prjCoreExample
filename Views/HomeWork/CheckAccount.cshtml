@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "CheckAccount";
+}
+
+<h1>CheckAccount</h1>
+
+<div class="container">
+    <form>
+        <div class="mb-3">
+            <label for="formGroupExampleInput" class="form-label">姓名: </label>
+            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="請輸入姓名">
+        </div>
+        <div id="error_name"></div>
+        <div class="mb-3">
+            <label for="formGroupExampleInput2" class="form-label">電子郵件: </label>
+            <input type="email" class="form-control" id="formGroupExampleInput2" placeholder="請輸入電子郵件">
+        </div>
+        <div class="mb-3">
+            <label for="formGroupExampleInput2" class="form-label">年紀: </label>
+            <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="請輸入年紀">
+        </div>
+        <button type="submit" class="btn btn-primary">送出</button>
+    </form>
+</div>
+
+
+@section Styles {
+    <style>
+
+    </style>
+
+}
+@section Scripts {
+    <script>
+        const errorName = document.querySelector("#error_name");
+        const input1 = document.querySelector("#formGroupExampleInput");
+        input1.addEventListener("blur", async(e) => {
+            console.log(e.target.value);
+            const url = `@Url.Content("~/api/checkaccount")?name=${e.target.value}`
+            const res = await fetch(url)
+            const data = await res.text();
+            errorName.innerHTML = data;
+            console.log(data);
+        })
+
+
+
+    </script>
+}
+
