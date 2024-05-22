@@ -29,8 +29,9 @@ namespace prjCoreExample.Controllers
            
             return View();
         }
-        public IActionResult Address() {
-         return View();
+        public IActionResult Address()
+        {
+            return View();
         }
 
         public IActionResult json()
@@ -38,7 +39,13 @@ namespace prjCoreExample.Controllers
             return View();
         }
 
-        public IActionResult Register() {
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        public IActionResult Spots()
+        {
             return View();
         }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using prjCoreExample.Models;
 using prjCoreExample.ViewModel;
 using System.Threading;
@@ -8,9 +9,11 @@ namespace prjCoreExample.Controllers
     public class ApiController : Controller
     {
         private readonly MyDBContext _context;
-        public ApiController(MyDBContext context)
+        private readonly IWebHostEnvironment _hostingEnviroment;
+        public ApiController(MyDBContext context, IWebHostEnvironment hostingEnviroment)
         {
             _context = context;
+            _hostingEnviroment= hostingEnviroment;   
         }
         public IActionResult City()
         {
@@ -30,6 +33,23 @@ namespace prjCoreExample.Controllers
             return Json(cities);
         }
 
+        public IActionResult Districts(string city)
+        {
+            var districts = _context.Addresses
+                .Where(r => r.City == city)
+                .Select(r => r.SiteId)
+                .Distinct();
+            return Json(districts);
+        }
+
+        public IActionResult Roads(string districts)
+        {
+            var roads = _context.Addresses
+                .Where(r => r.SiteId == districts)
+                .Select(r => r.Road);
+            return Json(roads);
+        }
+
         public IActionResult Cat(int? id)
         {
             Member? member = _context.Members.Find(id);
@@ -44,44 +64,63 @@ namespace prjCoreExample.Controllers
             return NotFound();
         }
 
-        public IActionResult Register(int? id, string name = "Jack", int age = 20 )
+        public IActionResult Register(Member member, IFormFile image)
         {
-            return Content($"Hello {name}, you are {age} years old, you are {id}", "text/html", System.Text.Encoding.UTF8);
+           
+            //CopyTo()方法會將檔案複製到指定的Stream
+            string filePath = Path.Combine(_hostingEnviroment.WebRootPath, "images", image.FileName);
+            using(var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                image.CopyTo(fileStream);
+            }
+
+            //檔案上轉成二進位              
+            byte[] fileData = null;
+            using (var memoryStream = new MemoryStream())
+            {
+                {
+                    image.CopyTo(memoryStream);
+                    fileData = memoryStream.ToArray();
+                }
+            }
+
+            //存入資料庫
+            member.FileData = fileData;
+            member.FileName = image.FileName;
+            _context.Members.Add(member);
+            _context.SaveChanges();
+
+
+            string info = $"{image.FileName}, {image.Length}, {image.ContentType}";
+            return Content(info, "text/plain", System.Text.Encoding.UTF8);
+            //return Content($"Hello {name}, you are {age} years old, your email is {email}", "text/html", System.Text.Encoding.UTF8);
         }
 
 
 
         public IActionResult CheckAccount(string name, string email)
         {
-            if (name == "Jack" && email == "Jack@Jack.com")
+           
+
+            var memberWithName = _context.Members.FirstOrDefault(r => r.Name == name);
+            var memberWithEmail = _context.Members.FirstOrDefault(r => r.Email == email);
+
+            if (memberWithName != null && memberWithEmail != null)
             {
                 return Content("此姓名和郵件已有人使用", "text/html", System.Text.Encoding.UTF8);
             }
-            else if (name == "Jack")
+            else if (memberWithName != null)
             {
                 return Content("此姓名已有人使用", "text/html", System.Text.Encoding.UTF8);
             }
-            else if (email == "Jack@Jack.com")
+            else if (memberWithEmail != null)
             {
                 return Content("此郵件已使用", "text/html", System.Text.Encoding.UTF8);
             }
-            else if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(email))
+            else
             {
                 return Content("此姓名和郵件無人使用", "text/html", System.Text.Encoding.UTF8);
             }
-            else if (!string.IsNullOrEmpty(name))
-            {
-                return Content("此姓名無人使用", "text/html", System.Text.Encoding.UTF8);
-            }
-            else if (!string.IsNullOrEmpty(email))
-            {
-                return Content("此郵件無人使用", "text/html", System.Text.Encoding.UTF8);
-            }
-
-            return Content("請提供有效的姓名和郵件", "text/html", System.Text.Encoding.UTF8);
-
-
-
         }
 
 
@@ -100,6 +139,11 @@ namespace prjCoreExample.Controllers
 
             return Content($"Hello! {user.Name}, {user.Age}歲了, 電子郵件是{user.Email}", "text/html", System.Text.Encoding.UTF8);
 
+        }
+
+        public IActionResult Spots([FromBody] CSearchDTO  cSearchDTO)
+        {
+            return Json(cSearchDTO);
         }
 
     }
