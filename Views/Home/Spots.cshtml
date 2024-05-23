@@ -21,6 +21,8 @@
             "sortType": "asc",
             "sortBy": ""
         };
+
+
         (async ()=>{
                 const url = "@Url.Content("~/api/spots")";
                 const res = await fetch(url, {
@@ -32,7 +34,9 @@
                 });
                 const datas = await res.json();
                 console.log(datas);
-                     
+
+                    
+                                                         
         })();
 
     

@@ -141,9 +141,15 @@ namespace prjCoreExample.Controllers
 
         }
 
+        [HttpPost]
         public IActionResult Spots([FromBody] CSearchDTO  cSearchDTO)
         {
             return Json(cSearchDTO);
+        }
+
+        public IActionResult Catagories()
+        {
+            return View();
         }
 
     }
