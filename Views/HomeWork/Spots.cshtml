@@ -1,0 +1,147 @@
+﻿
+@{
+    ViewData["Title"] = "Spots";
+}
+
+<h1>景點瀏覽</h1>
+<div class="row mb-3 ">
+    <div class="container col-3">
+        <select class="form-select w-75" aria-label="Default select example" id="formSelect">
+           
+        </select>
+    </div>
+
+    <div class="col-6">
+        <nav>
+            <ul class="pagination" id="ul1">
+            </ul>
+        </nav>
+    </div>
+    <div class="col-3">
+        <input type="search" placeholder="搜尋景點資料" class="form-control" id="inputSearch" />
+    </div>
+</div>
+<div class="container" id="category" >
+
+</div>
+<div class="container-md">
+    <div class="row row-cols-md-3 g-4 cardContainer">
+    </div>
+</div>
+
+
+
+@section Styles {
+    <style>
+
+    </style>
+
+}
+@section Scripts {
+    <script>
+        const cardBox = document.querySelector('.cardContainer');
+        const inpSearch = document.querySelector('#inputSearch');
+        const category = document.getElementById('category')
+        const formSelect = document.getElementById('formSelect')
+
+
+        const searchData = {
+            "categoryId": 0,
+            "keyword": "",
+            "page": 1,
+            "pageSize": 9,
+            "sortBy": "",
+            "sortType": "asc"
+        };
+
+      
+        const loadData = async() => {
+            const url = 'https://localhost:7144/api/Spots'
+            const response = await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify(searchData),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+           
+
+            //顯示景點
+            let string = "";
+            data.spotsResult.forEach(item => {
+                string += `
+                         <div class="col">
+                           <div class="card h-100">
+                                     <img src="${item.spotImage}" class="card-img-top" alt="...">
+                               <div class="card-body">
+                                     <h5 class="card-title">${item.spotTitle}</h5>
+                                      <p class="card-text">${item.spotDescription.length >= 50 ? item.spotDescription.substring(0, 50) : item.spotDescription}...</p>
+                               </div>
+                               <div class="card-footer">
+                                   <small class="text-muted">${item.address}</small>
+                               </div>
+                           </div>
+                       </div>
+                      `
+            })
+            cardBox.innerHTML = string;
+
+            //顯示分類
+            let stringCategory = "";
+            const urlCategory = 'https://localhost:7144/api/Categories';
+            const respond = await fetch(urlCategory);
+            const datas = await respond.json();
+            datas.forEach(item => {
+                stringCategory +=
+                `
+                        <button type="button" class="btn btn-outline-primary" value=${item.categoryId}>${item.categoryName}</button>
+                
+                `
+            })
+            category.innerHTML = stringCategory;
+
+            //顯示每頁幾筆
+            let strPageSelect = '';
+            for (let i = 5; i <= 10; i++) {
+                
+                strPageSelect += `
+                          <option value="${i}">每頁${i}筆資料</option>
+                `       
+            }
+            formSelect.innerHTML = strPageSelect;
+            if (searchData.pageSize) {
+                formSelect.value = searchData.pageSize;
+            } 
+
+        }
+        loadData();
+
+
+        //類別
+        category.addEventListener('click', async(e) => {
+            
+            searchData.categoryId = e.target.value;
+            loadData();
+        })
+
+        //每頁幾筆
+        formSelect.addEventListener('change', async (e) => {
+            searchData.pageSize = e.target.value;
+            await loadData();
+        });
+
+        //搜尋
+        inpSearch.addEventListener('keydown', async(event) => {
+            if (event.keyCode === 13) {
+               
+                searchData.keyword = event.target.value;
+                loadData();
+            }
+        })
+
+    </script>
+}
+
+
+
