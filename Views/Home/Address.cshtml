@@ -7,6 +7,8 @@
 
 <select id="selectBox"></select>
 
+<select id="selectDistricts"></select>
+
 @section Styles {
     <style>
 
@@ -16,6 +18,7 @@
 @section Scripts {
     <script>
         const selectBox = document.querySelector("#selectBox");
+        const selectDistricts = document.querySelector("#selectDistricts");
 
         (async () => {
             try {
@@ -23,17 +26,56 @@
                 if (!response.ok) { throw new Error(`${response.status}`)}
                 const datas = await response.json()
                 let string = "";
-                console.log(datas);
+                // console.log(datas);
                 datas.forEach(data => {
-                    string += `<option value="${data.id}">${data.city}</option>`
+                    string += `<option value="${data.city}">${data.city}</option>`
                 });
                 selectBox.innerHTML = string;
+
+                loadDistricts(selectBox.value)
             }
             catch (err) {
                 console.log(err.message)
             }
         })();
-    
+
+        selectBox.addEventListener("change", loadDistricts)
+
+        async function loadDistricts() {
+            try {
+                const response = await fetch(`@Url.Content("~/api/Districts")?city=${selectBox.value}`)
+                if (!response.ok) { throw new Error(`${response.status}`) }
+                const datas = await response.json()
+                console.log(datas);
+                let string = "";
+
+                datas.forEach(data => {
+                    string += `<option value="${data}">${data}</option>`
+                });
+                selectDistricts.innerHTML = string;
+            }
+            catch (err) {
+                console.log(err.message)
+            }
+
+        }
+        // async (e) => {
+        //     try {
+        //         const response = await fetch(`@Url.Content("~/api/Districts")?city=${e.target.value}`)
+        //         if (!response.ok) { throw new Error(`${response.status}`) }
+        //         const datas = await response.json()
+        //         console.log(datas);
+        //         let string = "";
+
+        //         datas.forEach(data => {
+        //             string += `<option value="${data}">${data}</option>`
+        //         });
+        //         selectDistricts.innerHTML = string;
+        //     }
+        //     catch (err) {
+        //         console.log(err.message)
+        //     }
+        // }
 
     </script>
 }
