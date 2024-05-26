@@ -18,5 +18,15 @@ namespace prjCoreExample.Controllers
             return View();
         }
 
+        public IActionResult SignUp()
+        {
+            return View();
+        }
+
+        public IActionResult test()
+        {
+            return View();
+        }
+
     }
 }

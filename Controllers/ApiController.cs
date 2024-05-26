@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using prjCoreExample.Models;
+using prjCoreExample.Models.DTO;
 using prjCoreExample.ViewModel;
 using System.Threading;
 
@@ -150,6 +151,26 @@ namespace prjCoreExample.Controllers
         public IActionResult Catagories()
         {
             return View();
+        }
+
+        public IActionResult SignUp(Member member, IFormFile image)
+        {
+            string filePath = Path.Combine(_hostingEnviroment.WebRootPath, "images", image.FileName);
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                image.CopyTo(fileStream);
+            }
+
+            member.FileName = image.FileName;
+            _context.Members.Add(member);
+            _context.SaveChanges();
+
+
+            CSignUpDTO res = new CSignUpDTO();
+            res.member = member;
+            res.member.FileName = image.FileName;
+
+            return Json(res);
         }
 
     }

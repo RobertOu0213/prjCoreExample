@@ -1,0 +1,137 @@
+﻿@model prjCoreExample.Models.Member
+
+@{
+    ViewData["Title"] = "SignUp";
+}
+@section Styles {
+    <style>
+
+    </style>
+
+}
+@section Scripts {
+    <script>      
+        //儲存session
+        window.onbeforeunload = function () {
+            const name = document.getElementById('iptName').value;
+            const email = document.getElementById('iptEmail').value;
+            const age = document.getElementById('iptAge').value;
+            const password = document.getElementById('iptPassword').value;
+            sessionStorage.setItem('formData', JSON.stringify({ name, email, age, password }));
+        };
+
+        //顯示session 在畫面上
+        window.onload = function () {
+            const formData = JSON.parse(sessionStorage.getItem('formData'));
+            if (formData) {
+                document.getElementById('iptName').value = formData.name;
+                document.getElementById('iptEmail').value = formData.email;
+                document.getElementById('iptAge').value = formData.age;
+                document.getElementById('iptPassword').value = formData.password;
+            }
+        };
+
+        const doubleCheckPassword = document.querySelector('#doubleCheckPassword');
+        const iptPassword = document.querySelector('#iptPassword');
+        const iptPasswordCheck = document.querySelector('#iptPasswordCheck');
+
+        const fileInput = document.querySelector('input[type="file"]');
+        fileInput.addEventListener('change', function () {
+            const file = this.files[0];
+            const reader = new FileReader();
+          
+            reader.onloadend = function () {
+                // reader.result 包含了圖片的 Base64 格式
+                sessionStorage.setItem('image', reader.result);
+                document.querySelector('img').src = this.result;  //顯示在畫面上
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+           
+        });
+
+        const image = sessionStorage.getItem('image');
+        if (image) {
+            document.querySelector('img').src = image;
+        }
+
+        //doublecheckPassword
+        iptPasswordCheck.addEventListener('blur', function () {
+            const password = iptPassword.value;
+            const doublePassword = iptPasswordCheck.value;
+            if (password === doublePassword) {
+                doubleCheckPassword.innerHTML = '密碼正確';
+            } else {
+                doubleCheckPassword.innerHTML = '密碼不正確';
+            }
+        });
+
+        const myForm = document.querySelector("#myForm");
+        myForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(myForm);  
+            const url = "@Url.Content("~/api/SignUp")";
+            const res = await fetch(url, {
+                method: "POST",
+                body: formData  
+            });
+            const data = await res.json();
+            console.log(data);
+            const string = JSON.stringify(data);
+            document.querySelector("#showMessage").innerHTML = string;
+            // setTimeout(function () {
+            //     myForm.submit();
+            // }, 5000);
+       
+        });
+
+    </script>
+}
+
+<h1>註冊會員</h1>
+<hr />
+
+
+@* action="/HomeWork/test" *@
+
+<div class="d-flex justify-content-center">
+    <div class="col-md-4">
+        <form method="post" id="myForm" >
+            <div class="form-group">
+                <label class="control-label">名字:</label>
+                <input class="form-control" type="text" name="name" id="iptName" />
+            </div>
+            <div class="form-group">
+                <label class="control-label">電子郵件:</label>
+                <input class="form-control" type="email" name="email" id="iptEmail" />  
+            </div>
+            <div class="form-group">
+                <label class="control-label">年紀:</label>
+                <input class="form-control" type="text" name="age" id="iptAge" />
+            </div>
+            <div class="form-group">
+                <label  class="control-label">密碼:</label>
+                <input class="form-control" type="password" name="password" id="iptPassword" />
+            </div>
+            <div class="form-group">
+                <label class="control-label">確認密碼:</label>
+                <input class="form-control" type="password" id="iptPasswordCheck" />
+            </div>
+            <div><span id="doubleCheckPassword"></span></div>
+            <div class="form-group">
+                <label class="control-label">頭像:</label>
+                <input type="file" class="form-control" name="image" />
+            </div>   
+            <div class="form-group">
+                <input type="submit" class="btn btn-primary" />
+            </div>
+        </form>
+        <img style="width:200px" />
+        <div id="showMessage"></div>
+    </div>
+</div>
+
+
+

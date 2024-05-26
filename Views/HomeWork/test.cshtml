@@ -1,0 +1,40 @@
+﻿
+@{
+    ViewData["Title"] = "test";
+}
+
+<h1>test</h1>
+
+<div class="d-flex justify-content-center">
+    <div class="col-md-4">
+        <form method="post" id="myForm">
+            <div class="form-group">
+                <label class="control-label">名字:</label>
+                <input class="form-control" type="text" name="name" id="iptName" />
+
+            </div>
+            <div class="form-group">
+                <label class="control-label">電子郵件:</label>
+                <input class="form-control" type="email" name="email" id="iptEmail" />
+
+            </div>
+            <div class="form-group">
+                <label class="control-label">年紀:</label>
+                <input class="form-control" type="text" name="age" id="iptAge" />
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">頭像:</label>
+                <input type="file" class="form-control" name="image" />
+            </div>
+            <div>
+               <a href="/HomeWork/SignUp">上一頁</a>
+            </div>
+            <div class="form-group">
+                <input type="submit" class="btn btn-primary" />
+            </div>
+        </form>
+        <div id="showMessage"></div>
+    </div>
+</div>
+
