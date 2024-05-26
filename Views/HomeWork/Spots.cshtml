@@ -6,14 +6,18 @@
 <h1>景點瀏覽</h1>
 <div class="row mb-3 ">
     <div class="container col-3">
-        <select class="form-select w-75" aria-label="Default select example" id="formSelect">
-           
+        <select class="form-select w-75" aria-label="Default select example" id="formSelect">         
+        </select>
+        <select class="form-select w-75" aria-label="Default select example" id="formSelectSort">
+            <option disabled selected>請選擇排序</option>
+            <option>景點編號升冪</option>
+            <option>景點編號降冪</option>
         </select>
     </div>
 
     <div class="col-6">
         <nav>
-            <ul class="pagination" id="ul1">
+            <ul class="pagination d-flex flex-wrap" id="ul1">
             </ul>
         </nav>
     </div>
@@ -33,6 +37,9 @@
 
 @section Styles {
     <style>
+        .pagination-wrapper {
+            max-width: 300px;
+        }
 
     </style>
 
@@ -43,6 +50,8 @@
         const inpSearch = document.querySelector('#inputSearch');
         const category = document.getElementById('category')
         const formSelect = document.getElementById('formSelect')
+        const ulPaging = document.querySelector('#ul1');
+        const formSelectSort = document.querySelector('#formSelectSort');
 
 
         const searchData = {
@@ -112,16 +121,36 @@
             formSelect.innerHTML = strPageSelect;
             if (searchData.pageSize) {
                 formSelect.value = searchData.pageSize;
-            } 
+            }
+
+
+            //顯示分頁按鈕
+            let liPages = "";
+            for (let i = 1; i <= data.totalPages; i++) {
+                liPages += `<li class="page-item" onclick="pagingHandler(${i})"><a class="page-link">${i}</a></li>`
+            }
+            ulPaging.innerHTML = liPages;
 
         }
         loadData();
 
+        formSelectSort.addEventListener('change' , async(e) => {
+            console.log(e.target.value);
+            if (e.target.value === '景點編號升冪') {
+                searchData.sortBy = 'SpotId';
+                searchData.sortType = 'asc';
+            } else if (e.target.value === '景點編號降冪') {
+                searchData.sortBy = 'SpotId';
+                searchData.sortType = 'desc';
+            }
+            await loadData();
+        })
 
         //類別
         category.addEventListener('click', async(e) => {
             
             searchData.categoryId = e.target.value;
+            searchData.page = 1;
             loadData();
         })
 
@@ -139,6 +168,11 @@
                 loadData();
             }
         })
+        //分頁
+        const pagingHandler = page => {
+            searchData.page = page;
+            loadData();
+        }
 
     </script>
 }
